@@ -43,9 +43,15 @@ const Registry = () => {
   };
 
   const currentHost = window.location.hostname;
-  const localIp = (currentHost === 'localhost' || currentHost === '127.0.0.1') ? networkIp : currentHost; 
+  const isNetlify = currentHost.includes('netlify.app');
+  
+  // On Netlify, we don't use port 5173 for the frontend URL
+  const displayHost = isNetlify ? currentHost : `${localIp}:5173`;
   const protocol = window.location.protocol; 
-  const mobileUrl = `${protocol}//${localIp}:5173/mobile`;
+  
+  // Construct the API URL for the mobile device to talk to
+  const backendApiUrl = `http://${networkIp}:5000`;
+  const mobileUrl = `${protocol}//${displayHost}/mobile?api=${encodeURIComponent(backendApiUrl)}`;
 
   const [newProduct, setNewProduct] = useState({ 
     productId: '', 
@@ -247,7 +253,8 @@ const Registry = () => {
                         enterprises
                         .filter(ent => ent.name.includes('Dhaka') || ent.name.includes('Sydney'))
                         .map((ent, idx) => {
-                            const syncUrl = `${protocol}//${localIp}:5173/mobile?eid=${ent.id}&mode=${ent.type === 'hub' ? 'enterprise' : 'user'}`;
+                            const baseURL = `${protocol}//${displayHost}/mobile`;
+                            const syncUrl = `${baseURL}?api=${encodeURIComponent(backendApiUrl)}&eid=${ent.id}&mode=${ent.type === 'hub' ? 'enterprise' : 'user'}`;
                             const isHub = ent.type === 'hub';
                             
                             return (

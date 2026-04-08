@@ -22,16 +22,23 @@ const MobileScan = () => {
     const isMounted = useRef(true);
 
     // 1. Initial Data Fetch & URL Parsing
+    const [apiUrl, setApiUrl] = useState(() => localStorage.getItem('mobile_sync_api') || '');
+
     useEffect(() => {
         isMounted.current = true;
         const query = new URLSearchParams(location.search);
         const mode = query.get('mode');
         const eid = query.get('eid');
+        const api = query.get('api');
 
         if (mode) setSimMode(mode);
         if (eid) setSelectedEnt(eid);
+        if (api) {
+            setApiUrl(api);
+            localStorage.setItem('mobile_sync_api', api);
+        }
 
-        fetchEnterprises();
+        fetchEnterprises(api || apiUrl);
         requestGps();
 
         return () => {
@@ -39,9 +46,10 @@ const MobileScan = () => {
         };
     }, []);
 
-    const fetchEnterprises = async () => {
+    const fetchEnterprises = async (targetApi) => {
         try {
-            const res = await axios.get('/api/enterprises');
+            const base = targetApi || apiUrl || '';
+            const res = await axios.get(`${base}/api/enterprises`);
             if (isMounted.current) setEnterprises(res.data);
         } catch (err) {
             console.error('Failed to fetch locations:', err);
@@ -165,7 +173,7 @@ const MobileScan = () => {
         };
 
         try {
-            const res = await axios.post('/api/scan', payload);
+            const res = await axios.post(`${apiUrl}/api/scan`, payload);
             if (isMounted.current) setScanResult(prev => ({ ...prev, ...res.data }));
         } catch (err) {
             console.error("Scan verification failed:", err);
