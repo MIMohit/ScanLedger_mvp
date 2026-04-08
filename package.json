@@ -1,0 +1,30 @@
+{
+  "name": "deepscan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm run dev -w backend",
+    "dev:frontend": "npm run dev -w frontend",
+    "dev": "npm run dev:backend & npm run dev:frontend"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "autoprefixer": "^10.4.27",
+    "axios": "^1.14.0",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^1.7.0",
+    "postcss": "^8.5.8",
+    "react-leaflet": "^5.0.0",
+    "react-router-dom": "^7.13.2",
+    "recharts": "^3.8.1",
+    "tailwindcss": "^4.2.2"
+  }
+}
