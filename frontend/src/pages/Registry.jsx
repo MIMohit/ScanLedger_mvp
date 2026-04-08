@@ -44,6 +44,7 @@ const Registry = () => {
 
   const currentHost = window.location.hostname;
   const isNetlify = currentHost.includes('netlify.app');
+  const localIp = (currentHost === 'localhost' || currentHost === '127.0.0.1') ? networkIp : currentHost; 
   
   // On Netlify, we don't use port 5173 for the frontend URL
   const displayHost = isNetlify ? currentHost : `${localIp}:5173`;
