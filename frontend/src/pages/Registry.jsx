@@ -68,7 +68,7 @@ const Registry = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('/api/products');
+      const res = await axios.get(`${backendApiUrl}/api/products`);
       setProducts(res.data);
     } catch (err) {
       console.error('Failed to fetch batches:', err);
@@ -79,7 +79,7 @@ const Registry = () => {
 
   const fetchEnterprises = async () => {
     try {
-      const res = await axios.get('/api/enterprises');
+      const res = await axios.get(`${backendApiUrl}/api/enterprises`);
       setEnterprises(res.data);
     } catch (err) {
       console.error('Failed to fetch locations:', err);
@@ -89,13 +89,13 @@ const Registry = () => {
   useEffect(() => {
     fetchProducts();
     fetchEnterprises();
-  }, []);
+  }, [networkIp]); // Refresh when IP changes
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('/api/product/register', newProduct);
+      const res = await axios.post(`${backendApiUrl}/api/product/register`, newProduct);
       if (res.data.success) {
         await fetchProducts();
         setShowModal(false);
@@ -285,7 +285,7 @@ const Registry = () => {
                             <p className="text-white text-sm font-bold italic italic tracking-tighter italic">Retail View</p>
                         </div>
                         <div className="p-4 bg-white rounded-[32px] shadow-2xl">
-                            <QRCodeSVG value={`${protocol}//${localIp}:5173/mobile`} size={140} />
+                            <QRCodeSVG value={`${protocol}//${displayHost}/mobile?api=${encodeURIComponent(backendApiUrl)}`} size={140} />
                         </div>
                          <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full border border-white/10">
                             <Smartphone className="w-3 h-3 text-gray-500" />

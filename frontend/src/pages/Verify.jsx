@@ -11,6 +11,12 @@ const Verify = () => {
   const [simulating, setSimulating] = useState(false);
   const [scanResult, setScanResult] = useState(null);
 
+  // Dynamic Backend Detection
+  const [apiUrl] = useState(() => {
+    const savedIp = localStorage.getItem('veri_real_network_ip');
+    return savedIp ? `http://${savedIp}:5000` : '';
+  });
+
   // Simulation State
   const [simMode, setSimMode] = useState('user'); // 'enterprise' or 'user'
   const [selectedEnt, setSelectedEnt] = useState('');
@@ -20,9 +26,9 @@ const Verify = () => {
 
   const fetchData = async () => {
     try {
-      const pRes = await axios.get(`/api/product/${productId}`);
+      const pRes = await axios.get(`${apiUrl}/api/product/${productId}`);
       setProduct(pRes.data);
-      const eRes = await axios.get('/api/enterprises');
+      const eRes = await axios.get(`${apiUrl}/api/enterprises`);
       setEnterprises(eRes.data);
     } catch (err) {
       console.error(err);
@@ -51,7 +57,7 @@ const Verify = () => {
         enterpriseId: selectedEnt
       };
 
-      const res = await axios.post('/api/scan', payload);
+      const res = await axios.post(`${apiUrl}/api/scan`, payload);
       setScanResult(res.data);
       await fetchData(); // Refresh state
     } catch (err) {
@@ -64,7 +70,7 @@ const Verify = () => {
   const handleRepairAnchor = async () => {
     setSimulating(true);
     try {
-      await axios.post(`/api/product/sync/${product.productId}`);
+      await axios.post(`${apiUrl}/api/product/sync/${product.productId}`);
       await fetchData();
       alert('Ledger Anchor Repaired Successfully!');
     } catch (err) {

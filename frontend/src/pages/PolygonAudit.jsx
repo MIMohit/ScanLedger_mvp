@@ -10,10 +10,16 @@ const PolygonAudit = () => {
   });
   const [loading, setLoading] = useState(true);
 
+  // Dynamic Backend Detection
+  const [apiUrl] = useState(() => {
+    const savedIp = localStorage.getItem('veri_real_network_ip');
+    return savedIp ? `http://${savedIp}:5000` : '';
+  });
+
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get('/api/blockchain/stats');
+        const res = await axios.get(`${apiUrl}/api/blockchain/stats`);
         setStats(res.data);
       } catch (err) {
         console.error('Failed to fetch blockchain stats:', err);
@@ -25,7 +31,7 @@ const PolygonAudit = () => {
     fetchStats();
     const interval = setInterval(fetchStats, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [apiUrl]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
